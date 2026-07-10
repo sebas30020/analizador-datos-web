@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_21.hdf5",
+    "descripcion": "Shots:\n1r: 3 disparos\n2do: 15 disparos\n3er: 18 disparos ( los primereros dispararon poca contaminación.\n\nEn el tercer ciclo se presenciaron arcos parciales más largos y sostenidos, cortocircuitando casi 3 discos.",
+    "tension_kv": "25",
+    "pollution": "5.65 gr, light",
+    "flash_over": "No Hay Flashover"
+}

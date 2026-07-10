@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_23.hdf5",
+    "descripcion": "Limpio\nEnsayo a 15 kV\n\nEn el ciclo de las 4:24 p.m. hubo descargas visibles.",
+    "tension_kv": "15",
+    "pollution": "Limpio",
+    "flash_over": "Dudoso"
+}

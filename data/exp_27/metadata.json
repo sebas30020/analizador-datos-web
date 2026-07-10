@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_27.hdf5",
+    "descripcion": "Cont inicial 25% → 5.24g\n\n200mVpp 0.8mV trigger\n\nNo se aplican ciclos de contaminación, 3 ciclos totales → LÍNEA BASE",
+    "tension_kv": "15",
+    "pollution": "light",
+    "flash_over": ""
+}

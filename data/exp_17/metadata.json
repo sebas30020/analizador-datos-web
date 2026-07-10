@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_17.hdf5",
+    "descripcion": "Bushing \"limpio\" pero en realidad este se encontraba con una cantidad mínima y desconocida de contaminación inicial.\n\nFiltro 90-2GHz en la entrada al osciloscopio.\nEn las primeras aspersiones se detectaron aparentes descargas. (Se supone el bushing estaba limpio). Estas descargas presentaron cierto delay al sonido de la aspersión, indicando que primero existió un desplazamiento de la humedad y luego se desencadenaron las descargas.\nEntre el segundo 1100 y 1200 cometí un pequeño error y disminuí el trigger. Eliminar estas señales, ruido adicional innecesario.\n\nEl avance del experimento tuvo como efecto que aparecieran más descargas disociadas de la aspersión.\n\nJusto en el cambio de régimen Spraying -> Drying las descargas parciales y/o el posible ruido cesaron.\n\nExperimento sin presencia de arcos parciales.",
+    "tension_kv": "25",
+    "pollution": "“Limpio”",
+    "flash_over": "No Hay Flashover"
+}

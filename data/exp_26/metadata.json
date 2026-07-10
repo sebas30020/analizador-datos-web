@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_26.hdf5",
+    "descripcion": "Cont inicial 25% → 5.14g\n\n200mVpp 0.8mV trigger\n\nHay presencia audible y visible en el primer y segundo ciclo.\n\nEsta medición debe de tener un pre-processing. (eliminar las señales saturadas).\n\nEn el tercer ciclo aparecen ya arcos parciales que cortocircuitan los discos centrales.",
+    "tension_kv": "15",
+    "pollution": "light",
+    "flash_over": "No Hay Flashover"
+}

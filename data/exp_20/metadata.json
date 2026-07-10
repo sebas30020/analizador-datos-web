@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_20.hdf5",
+    "descripcion": "Para este experimento se lijaron tanto las tuercas como las abrazaderas.",
+    "tension_kv": "25",
+    "pollution": "Limpio",
+    "flash_over": "No Hay Flashover"
+}

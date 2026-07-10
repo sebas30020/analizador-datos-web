@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_22.hdf5",
+    "descripcion": "Limpio.\nDistancia antena a acrílico → 50 cm\nRocío de sal de 5 segundos\n\nEn los últimos dos ciclos hubo presencia de arcos parciales considerables, largos pero no sostenidos y tampoco completamente despegados del bushing.",
+    "tension_kv": "25",
+    "pollution": "Limpio",
+    "flash_over": "No Hay Flashover"
+}
