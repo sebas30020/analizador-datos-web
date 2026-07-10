@@ -10,9 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         sidebarEl.classList.toggle('collapsed');
     });
 
-    let experiments = [];
     let selectedExperiments = new Set();
-
     let experiments = window.APP_DATA || [];
 
     renderSidebar();
