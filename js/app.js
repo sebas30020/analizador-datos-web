@@ -13,25 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let experiments = [];
     let selectedExperiments = new Set();
 
-    try {
-        const response = await fetch('data/index.json');
-        if (!response.ok) throw new Error('No se pudo cargar el índice');
-        experiments = await response.json();
-    } catch (error) {
-        console.warn("Usando datos dummy...");
-        experiments = [
-            { id: "17", name: "Exp 17" },
-            { id: "18", name: "Exp 18" },
-            { id: "19", name: "Exp 19" },
-            { id: "20", name: "Exp 20" },
-            { id: "21", name: "Exp 21" },
-            { id: "22", name: "Exp 22" },
-            { id: "23", name: "Exp 23" },
-            { id: "24", name: "Exp 24" },
-            { id: "26", name: "Exp 26" },
-            { id: "27", name: "Exp 27" }
-        ];
-    }
+    let experiments = window.APP_DATA || [];
 
     renderSidebar();
 
@@ -81,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderGrid();
     }
 
-    async function renderGrid() {
+    function renderGrid() {
         gridContainerEl.innerHTML = '';
         
         if (selectedExperiments.size === 0) {
@@ -100,37 +82,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             const card = document.createElement('div');
             card.className = 'experiment-card';
             
-            card.innerHTML = `
-                <div class="card-header">
-                    <h3>${exp.name}</h3>
-                </div>
-                <div style="padding: 40px; text-align: center; color: var(--text-secondary);">Cargando metadatos...</div>
-            `;
-            gridContainerEl.appendChild(card);
-            
-            let metadata = null;
-            try {
-                const res = await fetch(`data/exp_${expId}/metadata.json?t=${new Date().getTime()}`);
-                if (res.ok) metadata = await res.json();
-            } catch (e) {}
-
-            if (!metadata) {
-                metadata = {
-                    tension_kv: "N/A",
-                    pollution: "N/A",
-                    flash_over: "N/A",
-                    descripcion: "Metadatos no disponibles."
-                };
-            }
+            const metadata = {
+                tension_kv: exp.tension_kv || "N/A",
+                pollution: exp.pollution || "N/A",
+                flash_over: exp.flash_over || "N/A",
+                descripcion: exp.descripcion || "Metadatos no disponibles."
+            };
 
             const imgPath = `data/exp_${expId}/metrica_combinada_exp${expId}.png`;
             
             card.innerHTML = `
-                <div class="card-header">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h3>${exp.name}</h3>
+                    <select class="metric-select" data-exp="${expId}" style="background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border-color); padding: 5px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; outline: none;">
+                        <option value="combinada">Vista Combinada</option>
+                        <option value="feq">Solo FEQ</option>
+                        <option value="vpp">Solo VPP</option>
+                        <option value="teq">Solo TEQ</option>
+                    </select>
                 </div>
                 <div class="card-image">
-                    <img src="${imgPath}" alt="${exp.name}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/121216/A0A0AB?text=Gráfica+Exp+${expId}+No+Encontrada';">
+                    <img id="img-${expId}" src="${imgPath}" alt="${exp.name}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/121216/A0A0AB?text=Gráfica+Exp+${expId}+No+Encontrada';">
                 </div>
                 <div class="card-metadata">
                     <div class="metadata-grid">
@@ -150,6 +122,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="card-comments"><b>Comentarios del Experimento:</b><br><br>${metadata.descripcion || 'Sin comentarios.'}</div>
                 </div>
             `;
+            gridContainerEl.appendChild(card);
         }
+
+        // Bind events to dropdowns
+        document.querySelectorAll('.metric-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const expId = e.target.dataset.exp;
+                const metric = e.target.value;
+                const imgEl = document.getElementById(`img-${expId}`);
+                if (metric === 'combinada') {
+                    imgEl.src = `data/exp_${expId}/metrica_combinada_exp${expId}.png`;
+                } else {
+                    imgEl.src = `data/exp_${expId}/metrica_${metric}_exp${expId}.png`;
+                }
+            });
+        });
     }
 });

@@ -1,0 +1,66 @@
+window.APP_DATA = [
+    {
+        "id": "17",
+        "name": "Exp 17",
+        "tension_kv": "25",
+        "pollution": "“Limpio”",
+        "flash_over": "No Hay Flashover",
+        "descripcion": "Bushing \"limpio\" pero en realidad este se encontraba con una cantidad mínima y desconocida de contaminación inicial.\n\nFiltro 90-2GHz en la entrada al osciloscopio.\nEn las primeras aspersiones se detectaron aparentes descargas. (Se supone el bushing estaba limpio). Estas descargas presentaron cierto delay al sonido de la aspersión, indicando que primero existió un desplazamiento de la humedad y luego se desencadenaron las descargas.\nEntre el segundo 1100 y 1200 cometí un pequeño error y disminuí el trigger. Eliminar estas señales, ruido adicional innecesario.\n\nEl avance del experimento tuvo como efecto que aparecieran más descargas disociadas de la aspersión.\n\nJusto en el cambio de régimen Spraying -> Drying las descargas parciales y/o el posible ruido cesaron.\n\nExperimento sin presencia de arcos parciales."
+    },
+    {
+        "id": "20",
+        "name": "Exp 20",
+        "tension_kv": "25",
+        "pollution": "Limpio",
+        "flash_over": "No Hay Flashover",
+        "descripcion": "Para este experimento se lijaron tanto las tuercas como las abrazaderas."
+    },
+    {
+        "id": "21",
+        "name": "Exp 21",
+        "tension_kv": "25",
+        "pollution": "5.65 gr, light",
+        "flash_over": "No Hay Flashover",
+        "descripcion": "Shots:\n1r: 3 disparos\n2do: 15 disparos\n3er: 18 disparos ( los primereros dispararon poca contaminación.\n\nEn el tercer ciclo se presenciaron arcos parciales más largos y sostenidos, cortocircuitando casi 3 discos."
+    },
+    {
+        "id": "22",
+        "name": "Exp 22",
+        "tension_kv": "25",
+        "pollution": "Limpio",
+        "flash_over": "No Hay Flashover",
+        "descripcion": "Limpio.\nDistancia antena a acrílico → 50 cm\nRocío de sal de 5 segundos\n\nEn los últimos dos ciclos hubo presencia de arcos parciales considerables, largos pero no sostenidos y tampoco completamente despegados del bushing."
+    },
+    {
+        "id": "23",
+        "name": "Exp 23",
+        "tension_kv": "15",
+        "pollution": "Limpio",
+        "flash_over": "Dudoso",
+        "descripcion": "Limpio\nEnsayo a 15 kV\n\nEn el ciclo de las 4:24 p.m. hubo descargas visibles."
+    },
+    {
+        "id": "24",
+        "name": "Exp 24",
+        "tension_kv": "15",
+        "pollution": "",
+        "flash_over": "No Hay Flashover",
+        "descripcion": "Pistola 50 gr Sal - 15 gr Kaolín\nCont Inicial 25% → 5grs\n\nPresencia de pequeños arcos en el segundo ciclo solo en los discos inferiores\n\nSe aplicaron varios pistoletazos post 1r ciclo. Al menos 2 fueron efectivos.\n\nEn el segundo ciclo estaban ocurriendo pequeños arcos visibles y al momento de iniciar la etapa de secado cesaron."
+    },
+    {
+        "id": "26",
+        "name": "Exp 26",
+        "tension_kv": "15",
+        "pollution": "light",
+        "flash_over": "No Hay Flashover",
+        "descripcion": "Cont inicial 25% → 5.14g\n\n200mVpp 0.8mV trigger\n\nHay presencia audible y visible en el primer y segundo ciclo.\n\nEsta medición debe de tener un pre-processing. (eliminar las señales saturadas).\n\nEn el tercer ciclo aparecen ya arcos parciales que cortocircuitan los discos centrales."
+    },
+    {
+        "id": "27",
+        "name": "Exp 27",
+        "tension_kv": "15",
+        "pollution": "light",
+        "flash_over": "",
+        "descripcion": "Cont inicial 25% → 5.24g\n\n200mVpp 0.8mV trigger\n\nNo se aplican ciclos de contaminación, 3 ciclos totales → LÍNEA BASE"
+    }
+];
