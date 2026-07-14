@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analizador de Datos - Experimentos</title>
+    <title>Analizador de Datos - Dashboard Web</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -20,9 +20,10 @@
             <div class="brand">HV <span>Analytics</span></div>
         </div>
         <div class="navbar-center">
-            <ul class="nav-links">
-                <li class="active"><a href="#">Dashboard Visual</a></li>
-            </ul>
+            <div class="mode-toggle">
+                <button id="mode-a-btn" class="active">Modo A (1 Exp / N Métricas)</button>
+                <button id="mode-b-btn">Modo B (1 Métrica / N Exps)</button>
+            </div>
         </div>
         <div class="navbar-right">
         </div>
@@ -30,21 +31,24 @@
     <div class="app-container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2>Experimentos</h2>
+                <h2 id="sidebar-title">Experimentos</h2>
             </div>
-            <div class="experiment-list" id="experiment-list">
-                <!-- Experiment items will be injected here -->
+            <div class="experiment-list" id="sidebar-list">
+                <!-- Sidebar items will be injected here -->
             </div>
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Dashboard de Experimento</h1>
-                <p>Selecciona un experimento para revisar sus métricas detalladas.</p>
+                <h1 id="view-title">Dashboard de Visualización</h1>
+                <p id="view-subtitle">Selecciona una opción en el panel lateral.</p>
+                <div id="metadata-container" class="metadata-grid" style="display: none; margin-top: 20px;">
+                    <!-- Metadata will be injected here in Mode A -->
+                </div>
             </header>
-            <div id="experiment-view" style="width: 100%;">
-                <!-- Selected experiment will be injected here -->
+            <div id="grid-view" class="dashboard-grid">
+                <!-- Grid of graphs will be injected here -->
                 <div class="empty-state">
-                    <p>No hay experimento seleccionado.</p>
+                    <p>No hay selección.</p>
                 </div>
             </div>
         </main>

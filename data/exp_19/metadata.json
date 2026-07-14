@@ -1,0 +1,7 @@
+{
+    "nombre_experimento": "nuevo_exp_ciclos_19.hdf5",
+    "descripcion": "Flashover al primer ciclo.",
+    "tension_kv": "25",
+    "pollution": "4.14 gr, medium",
+    "flash_over": "Hay Flashover"
+}

@@ -1,43 +1,103 @@
 // js/app.js
 document.addEventListener('DOMContentLoaded', async () => {
-    const experimentListEl = document.getElementById('experiment-list');
-    const experimentViewEl = document.getElementById('experiment-view');
-    const sidebarEl = document.getElementById('sidebar');
+    const sidebarListEl = document.getElementById('sidebar-list');
+    const sidebarTitleEl = document.getElementById('sidebar-title');
+    const gridViewEl = document.getElementById('grid-view');
     const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+    const sidebarEl = document.getElementById('sidebar');
     
-    // Toggle Sidebar listener
+    const modeABtn = document.getElementById('mode-a-btn');
+    const modeBBtn = document.getElementById('mode-b-btn');
+    
+    const viewTitleEl = document.getElementById('view-title');
+    const viewSubtitleEl = document.getElementById('view-subtitle');
+    const metadataContainer = document.getElementById('metadata-container');
+
     toggleSidebarBtn.addEventListener('click', () => {
         sidebarEl.classList.toggle('collapsed');
     });
 
-    let selectedExperimentId = null;
     let experiments = window.APP_DATA || [];
+    let currentMode = 'A'; // 'A' or 'B'
+    let selectedId = null;
 
-    renderSidebar();
+    // Todas las métricas posibles
+    const METRICAS_NOMBRES = {
+        "vpp": "Vpp",
+        "kurtosis": "Kurtosis",
+        "skewness": "Skewness",
+        "tasa_pulsos": "Tasa de pulsos",
+        "zcr": "ZCR",
+        "delta_t": "Delta t",
+        "log_delta_t": "log(Delta t)",
+        "entropia_shannon": "Entropía de Shannon",
+        "f_aprox": "Frecuencia Aproximada",
+        "energia_chunk": "Energía por Chunk",
+        "energia_rel": "Energía Relativa",
+        "crest_factor": "Factor de Cresta"
+    };
+    
+    const metricKeys = Object.keys(METRICAS_NOMBRES);
 
-    function renderSidebar() {
-        experimentListEl.innerHTML = '';
-        experiments.forEach(exp => {
-            const item = document.createElement('div');
-            item.className = 'experiment-item';
-            item.dataset.id = exp.id;
-            
-            const label = document.createElement('span');
-            label.textContent = exp.name;
-            label.style.pointerEvents = 'none'; // so clicks go to the item
-            
-            item.appendChild(label);
-            
-            item.addEventListener('click', () => {
-                selectExperiment(exp.id);
-            });
-            
-            experimentListEl.appendChild(item);
-        });
+    modeABtn.addEventListener('click', () => setMode('A'));
+    modeBBtn.addEventListener('click', () => setMode('B'));
+
+    function setMode(mode) {
+        currentMode = mode;
+        selectedId = null;
+        if (mode === 'A') {
+            modeABtn.classList.add('active');
+            modeBBtn.classList.remove('active');
+            sidebarTitleEl.textContent = 'Experimentos';
+            viewTitleEl.textContent = 'Dashboard: Experimento a detalle';
+            viewSubtitleEl.textContent = 'Selecciona un experimento para ver todas sus métricas.';
+        } else {
+            modeBBtn.classList.add('active');
+            modeABtn.classList.remove('active');
+            sidebarTitleEl.textContent = 'Métricas';
+            viewTitleEl.textContent = 'Dashboard: Comparativa de Métrica';
+            viewSubtitleEl.textContent = 'Selecciona una métrica para comparar entre experimentos.';
+        }
+        metadataContainer.style.display = 'none';
+        renderSidebar();
+        renderGrid();
     }
 
-    function selectExperiment(id) {
-        selectedExperimentId = id;
+    function renderSidebar() {
+        sidebarListEl.innerHTML = '';
+        
+        let items = [];
+        if (currentMode === 'A') {
+            items = experiments.map(exp => ({ id: exp.id, label: exp.name }));
+        } else {
+            items = metricKeys.map(k => ({ id: k, label: METRICAS_NOMBRES[k] }));
+        }
+
+        items.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'experiment-item';
+            el.dataset.id = item.id;
+            
+            const label = document.createElement('span');
+            label.textContent = item.label;
+            label.style.pointerEvents = 'none';
+            
+            el.appendChild(label);
+            
+            el.addEventListener('click', () => {
+                selectItem(item.id);
+            });
+            
+            sidebarListEl.appendChild(el);
+        });
+        
+        if (items.length > 0) {
+            selectItem(items[0].id);
+        }
+    }
+
+    function selectItem(id) {
+        selectedId = id;
         
         document.querySelectorAll('.experiment-item').forEach(el => {
             if (el.dataset.id === id) {
@@ -47,142 +107,88 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
         
-        renderExperimentView();
+        renderGrid();
     }
 
-    function renderExperimentView() {
-        experimentViewEl.innerHTML = '';
+    function renderGrid() {
+        gridViewEl.innerHTML = '';
+        metadataContainer.style.display = 'none';
+        metadataContainer.innerHTML = '';
         
-        if (!selectedExperimentId) {
-            experimentViewEl.innerHTML = `
+        if (!selectedId) {
+            gridViewEl.innerHTML = `
                 <div class="empty-state">
-                    <p>No hay experimento seleccionado.</p>
+                    <p>No hay selección.</p>
                 </div>
             `;
             return;
         }
 
-        const exp = experiments.find(e => e.id === selectedExperimentId);
-        
-        const metadata = {
-            tension_kv: exp.tension_kv || "N/A",
-            pollution: exp.pollution || "N/A",
-            flash_over: exp.flash_over || "N/A",
-            descripcion: exp.descripcion || "Metadatos no disponibles."
-        };
+        if (currentMode === 'A') {
+            // Un experimento, múltiples métricas
+            const exp = experiments.find(e => e.id === selectedId);
+            if (!exp) return;
+            
+            viewTitleEl.textContent = `Experimento: ${exp.name}`;
+            viewSubtitleEl.textContent = exp.descripcion || "Visualización de todas las métricas disponibles.";
+            
+            metadataContainer.style.display = 'grid';
+            metadataContainer.innerHTML = `
+                <div class="meta-item">
+                    <span class="meta-label">Tensión (kV)</span>
+                    <span class="meta-value">${exp.tension_kv || '-'}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Polución</span>
+                    <span class="meta-value">${exp.pollution || '-'}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Flashover</span>
+                    <span class="meta-value">${exp.flash_over || '-'}</span>
+                </div>
+            `;
 
-        const initialImgPath = `data/exp_${selectedExperimentId}/metrica_combinada_exp${selectedExperimentId}.png`;
-        
-        const container = document.createElement('div');
-        container.className = 'experiment-detail';
-        container.style.cssText = 'background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; animation: fadeIn 0.4s; display: flex; flex-direction: column; gap: 20px;';
-        
-        container.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
-                <div style="flex: 1; min-width: 300px;">
-                    <h2 style="color: var(--accent); margin: 0 0 15px 0; font-size: 1.8rem;">${exp.name}</h2>
-                    <div class="metadata-grid" style="margin-bottom: 0;">
-                        <div class="meta-item">
-                            <span class="meta-label">Tensión (kV)</span>
-                            <span class="meta-value">${metadata.tension_kv || '-'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Polución</span>
-                            <span class="meta-value">${metadata.pollution || '-'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Flashover</span>
-                            <span class="meta-value">${metadata.flash_over || '-'}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="controls" style="display: flex; gap: 15px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap;">
-                    <div>
-                        <label style="display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px;">Métrica</label>
-                        <select id="metric-select" style="background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95rem; outline: none; cursor: pointer;">
-                            <option value="combinada">Combinada</option>
-                            <option value="feq">FEQ</option>
-                            <option value="vpp">VPP</option>
-                            <option value="teq">TEQ</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px;">Alcance</label>
-                        <select id="scope-select" style="background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95rem; outline: none; cursor: pointer;">
-                            <option value="completa">Serie Completa</option>
-                            <option value="ciclo">Por Ciclo</option>
-                        </select>
-                    </div>
-                    <div id="cycle-container" style="display: none;">
-                        <label style="display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px;">Ciclo #</label>
-                        <input type="number" id="cycle-input" min="1" value="1" style="background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; width: 70px; font-size: 0.95rem; outline: none;">
-                    </div>
-                </div>
-            </div>
+            const availableMetrics = exp.metricas_disponibles || metricKeys;
+
+            availableMetrics.forEach(metric => {
+                const title = METRICAS_NOMBRES[metric] || metric;
+                const imgSrc = `data/exp_${exp.id}/exp${exp.id}_${metric}.png`;
+                createGraphCard(title, imgSrc);
+            });
+
+        } else {
+            // Una métrica, múltiples experimentos
+            const metricKey = selectedId;
+            const title = METRICAS_NOMBRES[metricKey];
             
-            <div class="image-viewer" style="background: #ffffff; padding: 20px; border-radius: 8px; text-align: center; min-height: 400px; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
-                <img id="main-chart" src="${initialImgPath}" alt="Gráfica de ${exp.name}" style="max-width: 100%; max-height: 70vh; object-fit: contain; transition: opacity 0.3s;" onerror="this.onerror=null; this.src='https://placehold.co/1000x500/121216/A0A0AB?text=Gráfica+No+Disponible';">
+            viewTitleEl.textContent = `Métrica: ${title}`;
+            viewSubtitleEl.textContent = "Comparativa a lo largo de los distintos experimentos.";
+
+            experiments.forEach(exp => {
+                const availableMetrics = exp.metricas_disponibles || metricKeys;
+                if (availableMetrics.includes(metricKey)) {
+                    const imgSrc = `data/exp_${exp.id}/exp${exp.id}_${metricKey}.png`;
+                    createGraphCard(exp.name, imgSrc);
+                }
+            });
+        }
+    }
+
+    function createGraphCard(title, imgSrc) {
+        const card = document.createElement('div');
+        card.className = 'graph-card';
+        
+        card.innerHTML = `
+            <div class="graph-card-header">
+                <h3>${title}</h3>
             </div>
-            
-            <div class="card-comments" style="margin-bottom: 0;">
-                <b style="color: #fff;">Comentarios del Experimento:</b><br><br>${metadata.descripcion || 'Sin comentarios.'}
+            <div class="graph-image">
+                <img src="${imgSrc}" alt="Gráfica de ${title}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/ffffff/cccccc?text=No+Disponible';">
             </div>
         `;
         
-        experimentViewEl.appendChild(container);
-        
-        // Bind events
-        const metricSelect = document.getElementById('metric-select');
-        const scopeSelect = document.getElementById('scope-select');
-        const cycleContainer = document.getElementById('cycle-container');
-        const cycleInput = document.getElementById('cycle-input');
-        const mainChart = document.getElementById('main-chart');
-        
-        function updateChartImage() {
-            const metric = metricSelect.value;
-            const scope = scopeSelect.value;
-            const cycle = cycleInput.value;
-            
-            let imgName = '';
-            
-            if (scope === 'completa') {
-                if (metric === 'combinada') {
-                    imgName = `metrica_combinada_exp${selectedExperimentId}.png`;
-                } else {
-                    imgName = `metrica_${metric}_exp${selectedExperimentId}.png`;
-                }
-            } else {
-                // By cycle
-                if (metric === 'combinada') {
-                    imgName = `metrica_combinada_exp${selectedExperimentId}_ciclo${cycle}.png`;
-                } else {
-                    imgName = `metrica_${metric}_exp${selectedExperimentId}_ciclo${cycle}.png`;
-                }
-            }
-            
-            const newSrc = `data/exp_${selectedExperimentId}/${imgName}`;
-            
-            // Adding a small fade effect
-            mainChart.style.opacity = '0.5';
-            setTimeout(() => {
-                mainChart.src = newSrc;
-                mainChart.style.opacity = '1';
-            }, 150);
-        }
-
-        metricSelect.addEventListener('change', updateChartImage);
-        
-        scopeSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'ciclo') {
-                cycleContainer.style.display = 'block';
-            } else {
-                cycleContainer.style.display = 'none';
-            }
-            updateChartImage();
-        });
-        
-        cycleInput.addEventListener('input', updateChartImage);
-        cycleInput.addEventListener('change', updateChartImage);
+        gridViewEl.appendChild(card);
     }
+
+    setMode('A');
 });
