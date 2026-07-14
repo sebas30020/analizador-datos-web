@@ -212,5 +212,74 @@ document.addEventListener('DOMContentLoaded', async () => {
         gridViewEl.appendChild(card);
     }
 
+    // --- Lightbox Zoom Logic ---
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    let currentScale = 1;
+    let isDragging = false;
+    let startX, startY, translateX = 0, translateY = 0;
+
+    // Open Lightbox
+    gridViewEl.addEventListener('click', (e) => {
+        if (e.target.tagName === 'IMG' && e.target.closest('.graph-image')) {
+            lightbox.style.display = 'flex';
+            lightboxImg.src = e.target.src;
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+        }
+    });
+
+    // Close Lightbox
+    lightboxClose.addEventListener('click', () => {
+        lightbox.style.display = 'none';
+    });
+
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.classList.contains('lightbox-img-container')) {
+            lightbox.style.display = 'none';
+        }
+    });
+
+    // Zoom with Wheel
+    lightbox.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomSensitivity = 0.1;
+        if (e.deltaY < 0) {
+            currentScale += zoomSensitivity;
+        } else {
+            currentScale -= zoomSensitivity;
+        }
+        currentScale = Math.max(0.5, Math.min(currentScale, 5)); // Limit zoom between 0.5x and 5x
+        updateTransform();
+    });
+
+    // Pan with Mouse Drag
+    const imgContainer = document.querySelector('.lightbox-img-container');
+    
+    imgContainer.addEventListener('mousedown', (e) => {
+        if (e.target !== lightboxImg) return;
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    function updateTransform() {
+        lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+    }
+
     setMode('A');
 });
