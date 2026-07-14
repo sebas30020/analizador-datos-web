@@ -13,12 +13,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const viewSubtitleEl = document.getElementById('view-subtitle');
     const metadataContainer = document.getElementById('metadata-container');
 
+    const modeChunkBtn = document.getElementById('mode-chunk-btn');
+    const modeGroupBtn = document.getElementById('mode-group-btn');
+
     toggleSidebarBtn.addEventListener('click', () => {
         sidebarEl.classList.toggle('collapsed');
     });
 
     let experiments = window.APP_DATA || [];
     let currentMode = 'A'; // 'A' or 'B'
+    let analysisMode = 'chunk'; // 'chunk' or 'group'
     let selectedId = null;
 
     // Todas las métricas posibles
@@ -41,6 +45,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     modeABtn.addEventListener('click', () => setMode('A'));
     modeBBtn.addEventListener('click', () => setMode('B'));
+
+    if (modeChunkBtn && modeGroupBtn) {
+        modeChunkBtn.addEventListener('click', () => {
+            analysisMode = 'chunk';
+            modeChunkBtn.classList.add('active');
+            modeGroupBtn.classList.remove('active');
+            renderGrid();
+        });
+
+        modeGroupBtn.addEventListener('click', () => {
+            analysisMode = 'group';
+            modeGroupBtn.classList.add('active');
+            modeChunkBtn.classList.remove('active');
+            renderGrid();
+        });
+    }
 
     function setMode(mode) {
         currentMode = mode;
@@ -152,7 +172,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             availableMetrics.forEach(metric => {
                 const title = METRICAS_NOMBRES[metric] || metric;
-                const imgSrc = `data/exp_${exp.id}/exp${exp.id}_${metric}.png`;
+                const suffix = analysisMode === 'group' ? '_g5' : '';
+                const imgSrc = `data/exp_${exp.id}/exp${exp.id}_${metric}${suffix}.png`;
                 createGraphCard(title, imgSrc);
             });
 
@@ -167,7 +188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             experiments.forEach(exp => {
                 const availableMetrics = exp.metricas_disponibles || metricKeys;
                 if (availableMetrics.includes(metricKey)) {
-                    const imgSrc = `data/exp_${exp.id}/exp${exp.id}_${metricKey}.png`;
+                    const suffix = analysisMode === 'group' ? '_g5' : '';
+                    const imgSrc = `data/exp_${exp.id}/exp${exp.id}_${metricKey}${suffix}.png`;
                     createGraphCard(exp.name, imgSrc);
                 }
             });
